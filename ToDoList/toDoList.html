@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ToDoList</title>
+    <script src="https://cdn.bootcss.com/vue/2.6.4/vue.min.js"></script>
+</head>
+<body>
+<div id="root">
+    <div>
+        <input v-model="inputValue"/>
+        <button @click="submit()">提交</button>
+    </div>
+    <ul>
+        <!--<li v-for="(item,index) of list" :key="index">
+            {{item}}
+        </li>
+-->
+        <todo-item v-for="(item,index) of list"
+                   :key="index"
+                   :content="item"
+                   :index="index"
+                   @delete="handleDelete"><!--content内包含item要传递的值-->
+
+        </todo-item><!--此处为自定义的组件-->
+    </ul>
+</div>
+<script>
+    Vue.component('todo-item',{
+        props:['content','index'],/*props属性表示用来接收要传递的值的一个属性*/
+        template:'<li @click="handleClick">{{content}}</li>',/*更复杂的item形式由template属性里的标签来决定*/
+        methods:{
+            handleClick: function(){
+                this.$emit('delete',this.index)
+                /*emit用于实现子组件向父组件实现通信*/
+            }
+
+        }/*自定义组件里同样也可以添加方法或绑定操作*/
+    })/*全局组件，任何地方都可以使用标签进行使用*/
+    /*var ToDOItem = {
+        template:'<li>item</li>'
+    }*//*局部组件，局部使用*/
+    new Vue({
+        el:'#root',
+        data:{
+            inputValue:'hello',
+            list:[]
+        },
+        components:{
+            /*局部组件在这里声名*/
+        },
+        methods:{
+            submit:function(){
+                this.list.push(this.inputValue);
+                this.inputValue=''
+
+            },
+            handleDelete:function(index){
+                var con = confirm("确认要删除此条记录吗？")
+                if(con){
+                    this.list.splice(index,1)
+                }
+
+            }
+
+
+        }
+    })
+</script>
+
+</body>
+</html>
